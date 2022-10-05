@@ -1,0 +1,10 @@
+---
+- name: Update package cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install basic packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ packages }}"

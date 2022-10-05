@@ -1,0 +1,11 @@
+---
+- name: Add the official GitLab repository
+  ansible.builtin.shell:
+    cmd: curl -L "{{ gitlab_install_script_link }}" | sudo bash
+    creates: "{{ gitlab_runner_sources_list }}"
+
+- name: Install Gitlab Runner
+  ansible.builtin.apt:
+    name: gitlab-runner
+    update_cache: yes
+    state: latest

@@ -1,0 +1,59 @@
+---
+- name: Update packages cache
+  ansible.builtin.apt:
+    update_cache: yes 
+
+- name: Install prerequisit packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+
+- name: Install Docker
+  block:
+    - name: Create /etc/apt/keyrings
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+
+    - name: Add Docker's official GPG key
+      ansible.builtin.shell:
+        cmd: curl -fsSL "{{ docker_gpg_link }}" | sudo gpg --dearmor -o "{{ docker_gpg_file }}"
+        creates: "{{ docker_gpg_file }}"
+
+    - name: Set Docker repository
+      block:
+        - ansible.builtin.file:
+            path: "{{ docker_sources_list }}"
+            state: touch
+            owner: root
+            group: root
+
+        - ansible.builtin.shell:
+            cmd: dpkg --print-architecture
+          register: deb_arch
+
+        - ansible.builtin.shell:
+            cmd: lsb_release -cs
+          register: deb_codename
+
+        - ansible.builtin.lineinfile:
+            path: "{{ docker_sources_list }}"
+            # escape `['
+            regexp: '^deb \[arch='
+            line: "deb [arch={{ deb_arch.stdout }} signed-by={{ docker_gpg_file }}] {{ docker_repo_link }} {{ deb_codename.stdout }} stable"
+            state: present
+
+    - name: Update package cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: latest
+      loop: "{{ packages }}"

@@ -1,0 +1,3 @@
+---
+gitlab_install_script_link: "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh"
+gitlab_runner_sources_list: "/etc/apt/sources.list.d/runner_gitlab-runner.list"

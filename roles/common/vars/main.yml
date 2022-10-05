@@ -1,0 +1,19 @@
+---
+packages:
+  - sudo
+  - nfs-common
+  - vim
+  - tcpdump
+  - gawk
+  - htop
+  - tar
+  - gzip
+  - zip
+  - unzip
+  - wget
+  - curl
+  - strace
+  - lsof
+  - lshw
+  - openssh-server
+  - net-tools
